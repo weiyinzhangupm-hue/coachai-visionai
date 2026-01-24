@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/
+
+# Java
+*.class
+*.jar
+!java/lib/*.jar
+target/
+*.log
+hs_err_pid*
+
+# 数据集
+dataset/raw/**/*.mp4
+dataset/raw/**/*.avi
+dataset/raw/**/*.mov
+dataset/processed/*
+*.csv
+!dataset/README.md
+
+# 模型文件
+models/*.model
+models/*.pkl
+*.arff
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 日志和结果
+results/logs/*.log
+results/videos/*.mp4
+results/plots/*.png
+*.log
+
+# 临时文件
+temp_*
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 环境配置
+.env
+.env.local
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 编译文件
+*.com
+*.dll
+*.exe
+*.o
+*.so
+

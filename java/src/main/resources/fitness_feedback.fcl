@@ -1,0 +1,149 @@
+FUNCTION_BLOCK fitness_feedback
+
+// 定义输入变量
+VAR_INPUT
+    velocidad : REAL;      // 速度（秒/次），范围 0.5-10
+    amplitud : REAL;       // 动作幅度（角度），范围 0-180
+    estabilidad : REAL;    // 稳定性，范围 0-100
+    fatiga : REAL;         // 疲劳度，范围 0-100
+END_VAR
+
+// 定义输出变量
+VAR_OUTPUT
+    puntuacion : REAL;     // 评分，范围 0-10
+END_VAR
+
+// 速度的模糊化
+FUZZIFY velocidad
+    TERM muy_rapido := (0.5, 1) (1.0, 1) (1.5, 0);
+    TERM rapido := (1.0, 0) (1.5, 1) (2.0, 0);
+    TERM normal := (1.5, 0) (2.0, 1) (3.0, 1) (3.5, 0);
+    TERM lento := (3.0, 0) (3.5, 1) (4.5, 0);
+    TERM muy_lento := (4.0, 0) (5.0, 1) (10.0, 1);
+END_FUZZIFY
+
+// 幅度的模糊化
+FUZZIFY amplitud
+    TERM muy_baja := (0, 1) (50, 1) (70, 0);
+    TERM baja := (60, 0) (75, 1) (90, 0);
+    TERM adecuada := (85, 0) (100, 1) (120, 1) (130, 0);
+    TERM alta := (120, 0) (140, 1) (160, 0);
+    TERM muy_alta := (150, 0) (170, 1) (180, 1);
+END_FUZZIFY
+
+// 稳定性的模糊化
+FUZZIFY estabilidad
+    TERM baja := (0, 1) (40, 1) (60, 0);
+    TERM media := (50, 0) (70, 1) (85, 0);
+    TERM alta := (80, 0) (90, 1) (100, 1);
+END_FUZZIFY
+
+// 疲劳度的模糊化
+FUZZIFY fatiga
+    TERM baja := (0, 1) (20, 1) (40, 0);
+    TERM media := (30, 0) (50, 1) (70, 0);
+    TERM alta := (60, 0) (80, 1) (100, 1);
+END_FUZZIFY
+
+// 评分的去模糊化
+DEFUZZIFY puntuacion
+    TERM muy_baja := (0, 1) (2, 1) (3, 0);
+    TERM baja := (2, 0) (3, 1) (4, 1) (5, 0);
+    TERM media := (4, 0) (5, 1) (6, 1) (7, 0);
+    TERM alta := (6, 0) (7, 1) (8, 1) (9, 0);
+    TERM muy_alta := (8, 0) (9, 1) (10, 1);
+    
+    METHOD : COG;        // 重心法去模糊化
+    DEFAULT := 5.0;      // 默认值
+END_DEFUZZIFY
+
+// 模糊规则库
+RULEBLOCK reglas
+    AND : MIN;           // 使用最小值作为AND操作
+    ACT : MIN;           // 使用最小值作为激活方法
+    ACCU : MAX;          // 使用最大值作为累积方法
+
+    // === 优秀动作规则 ===
+    RULE 1 : IF velocidad IS normal AND amplitud IS adecuada AND estabilidad IS alta
+             THEN puntuacion IS muy_alta;
+    
+    RULE 2 : IF velocidad IS normal AND amplitud IS adecuada AND estabilidad IS media
+             THEN puntuacion IS alta;
+    
+    RULE 3 : IF velocidad IS rapido AND amplitud IS adecuada AND estabilidad IS alta
+             THEN puntuacion IS alta;
+    
+    RULE 4 : IF velocidad IS lento AND amplitud IS adecuada AND estabilidad IS alta
+             THEN puntuacion IS alta;
+    
+    // === 良好动作规则 ===
+    RULE 5 : IF velocidad IS normal AND amplitud IS adecuada AND estabilidad IS baja
+             THEN puntuacion IS media;
+    
+    RULE 6 : IF velocidad IS normal AND amplitud IS alta AND estabilidad IS media
+             THEN puntuacion IS media;
+    
+    RULE 7 : IF velocidad IS rapido AND amplitud IS adecuada AND estabilidad IS media
+             THEN puntuacion IS media;
+    
+    // === 需改进规则 - 幅度不足 ===
+    RULE 8 : IF amplitud IS muy_baja
+             THEN puntuacion IS muy_baja;
+    
+    RULE 9 : IF amplitud IS baja AND estabilidad IS baja
+             THEN puntuacion IS baja;
+    
+    RULE 10 : IF amplitud IS baja AND estabilidad IS media
+              THEN puntuacion IS media;
+    
+    RULE 11 : IF amplitud IS baja AND estabilidad IS alta
+              THEN puntuacion IS media;
+    
+    // === 需改进规则 - 速度问题 ===
+    RULE 12 : IF velocidad IS muy_rapido
+              THEN puntuacion IS baja;
+    
+    RULE 13 : IF velocidad IS muy_lento AND fatiga IS alta
+              THEN puntuacion IS baja;
+    
+    RULE 14 : IF velocidad IS muy_lento AND fatiga IS media
+              THEN puntuacion IS media;
+    
+    // === 稳定性规则 ===
+    RULE 15 : IF estabilidad IS baja AND amplitud IS adecuada
+              THEN puntuacion IS media;
+    
+    RULE 16 : IF estabilidad IS baja AND amplitud IS baja
+              THEN puntuacion IS baja;
+    
+    // === 疲劳影响规则 ===
+    RULE 17 : IF fatiga IS alta AND velocidad IS muy_lento
+              THEN puntuacion IS baja;
+    
+    RULE 18 : IF fatiga IS alta AND estabilidad IS baja
+              THEN puntuacion IS baja;
+    
+    RULE 19 : IF fatiga IS media AND velocidad IS normal AND amplitud IS adecuada
+              THEN puntuacion IS alta;
+    
+    // === 极端情况规则 ===
+    RULE 20 : IF velocidad IS muy_rapido AND amplitud IS muy_baja
+              THEN puntuacion IS muy_baja;
+    
+    RULE 21 : IF amplitud IS muy_alta
+              THEN puntuacion IS baja;
+    
+    RULE 22 : IF velocidad IS normal AND amplitud IS alta AND estabilidad IS alta
+              THEN puntuacion IS alta;
+    
+    // === 综合优秀表现规则 ===
+    RULE 23 : IF velocidad IS normal AND amplitud IS adecuada AND estabilidad IS alta AND fatiga IS baja
+              THEN puntuacion IS muy_alta;
+    
+    RULE 24 : IF velocidad IS rapido AND amplitud IS adecuada AND estabilidad IS alta AND fatiga IS baja
+              THEN puntuacion IS muy_alta;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
