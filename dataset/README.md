@@ -5,7 +5,7 @@ Este directorio se utiliza para almacenar los datos de entrenamiento y de prueba
 
 ## estructura de directorios
 
-´´´
+```
 dataset/
 ├── raw/                   # datos de vídeo originales
 
