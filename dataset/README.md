@@ -1,12 +1,14 @@
-# 数据集说明
+# descripción del conjunto de datos
 
-本目录用于存储训练和测试数据。
+Este directorio se utiliza para almacenar los datos de entrenamiento y de prueba.
 
-## 目录结构
 
-```
+## estructura de directorios
+
+‘’‘
 dataset/
-├── raw/                    # 原始视频数据
+├── raw/                    # datos de vídeo originales
+
 │   ├── squat/             # 深蹲动作
 │   │   ├── correct/       # 正确动作
 │   │   └── incorrect/     # 错误动作
