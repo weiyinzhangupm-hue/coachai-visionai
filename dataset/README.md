@@ -5,9 +5,9 @@ Este directorio se utiliza para almacenar los datos de entrenamiento y de prueba
 
 ## estructura de directorios
 
-‘’‘
+´´´
 dataset/
-├── raw/                    # datos de vídeo originales
+├── raw/                   # datos de vídeo originales
 
 │   ├── squat/             # 深蹲动作
 │   │   ├── correct/       # 正确动作
