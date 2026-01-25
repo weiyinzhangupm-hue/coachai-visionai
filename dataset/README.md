@@ -9,82 +9,82 @@ Este directorio se utiliza para almacenar los datos de entrenamiento y de prueba
 dataset/
 ├── raw/                   # datos de vídeo originales
 
-│   ├── squat/             # 深蹲动作
-│   │   ├── correct/       # 正确动作
-│   │   └── incorrect/     # 错误动作
-│   └── pushup/            # 俯卧撑动作
-│       ├── correct/       # 正确动作
-│       └── incorrect/     # 错误动作
-├── processed/             # 处理后的特征数据
-├── train.csv              # 训练集
-├── test.csv               # 测试集
-└── README.md              # 本文件
+│   ├── squat/             # acción Squat
+│   │   ├── correct/       # ejecución correcta
+│   │   └── incorrect/     # ejecución incorrecta
+│   └── pushup/            # acción Pushup
+│       ├── correct/       # ejecución correcta
+│       └── incorrect/     # ejecución incorrecta
+├── processed/             # datos de características procesadas
+├── train.csv              # conjunto de entrenamiento
+├── test.csv               # conjunto de prueba
+└── README.md              # este archivo
 ```
 
-## 数据采集指南
+## Guía de recopilación de datos
 
-### 1. 使用数据采集工具
+### 1. Uso de la herramienta de recopilación de datos
 
 ```bash
 cd python
 python data_collector.py
 ```
 
-### 2. 采集要求
+### 2. Requisitos de recopilación
 
-#### 深蹲 (Squat)
-**正确动作**:
-- 双脚与肩同宽
-- 膝盖不超过脚尖
-- 背部挺直
-- 下蹲至大腿与地面平行
+#### Squat (Squat)
+**Ejecución correcta:**:
+- Pies separados al ancho de los hombros
+- Las rodillas no sobrepasan la punta de los pies
+- Espalda recta
+- Descenso hasta que los muslos queden paralelos al suelo
 
-**常见错误**:
-- 膝盖内扣 (knee_valgus)
-- 下蹲不足 (insufficient_depth)
-- 重心前倾 (forward_lean)
+**Errores comunes:**:
+- Rodillas hacia dentro (knee_valgus)
+- Profundidad insuficiente (insufficient_depth)
+- Inclinación excesiva del tronco hacia delante (forward_lean)
 
-#### 俯卧撑 (Pushup)
-**正确动作**:
-- 身体保持一条直线
-- 手臂打开略宽于肩
-- 下降至肘部90度
-- 保持核心收紧
+#### Pushup (Pushup)
+**Ejecución correcta:**:
+- El cuerpo mantiene una línea recta
+- Brazos ligeramente más abiertos que el ancho de los hombros
+- Descenso hasta que los codos alcancen 90 grados
+- Core activado durante todo el movimiento
 
-**常见错误**:
-- 塌腰 (sagging_back)
-- 臀部过高 (high_hips)
-- 手臂角度错误 (wrong_arm_angle)
+**Errores comunes:**:
+- Hundimiento de la zona lumbar (sagging_back) (sagging_back)
+- Caderas demasiado elevadas(high_hips)
+- Ángulo incorrecto de los brazos (wrong_arm_angle)
 
-### 3. 采集建议
+### 3. Recomendaciones de recopilación
 
-**数量要求**:
-- 每种动作至少30个正确样本
-- 每种错误类型至少20个样本
-- 总目标：400个样本
+**Cantidad mínima:**:
+- Al menos 30 muestras correctas por cada tipo de ejercicio
+- Al menos 20 muestras por cada tipo de error
+- Objetivo total: 400 muestras
 
-**质量要求**:
-- 确保全身在摄像头视野内
-- 光线充足，避免背光
-- 背景简洁，减少干扰
-- 多角度采集（正面、侧面）
-- 多人采集（不同体型）
+**Requisitos de calidad:**:
+- Todo el cuerpo debe aparecer dentro del campo de visión de la cámara
+- Iluminación adecuada, evitando contraluces
+- Fondo sencillo para reducir interferencias
+- Grabación desde múltiples ángulos (frontal y lateral)
+- Participación de varias personas (diferentes complexiones físicas)
 
-**标注规范**:
-- 准确标记动作类型
-- 明确标注正确/错误
-- 详细记录错误类型
-- 保存原始视频和特征数据
+**Normas de etiquetado:**:
+- Etiquetar correctamente el tipo de ejercicio
+- Indicar claramente si la ejecución es correcta o incorrecta
+- Especificar el tipo de error cuando corresponda
+- Conservar tanto los vídeos originales como los datos de características
 
-## 数据格式
+## Formato de los datos
 
-### 原始数据
-每个采集会话生成：
-- `.mp4` - 原始视频文件
-- `_features.json` - 提取的特征数据
+### Datos originales
+Cada sesión de recopilación genera:
+- `.mp4` - archivo de vídeo original
+- `_features.json` - datos de características extraídas
 
-### 处理后数据
-CSV文件格式：
+### Datos procesados
+Formato de los archivos CSV:
 ```csv
 angle_knee_avg,angle_hip_avg,shoulder_width,trunk_length,...,label
 120.5,85.3,0.15,0.25,...,squat_correct
@@ -92,26 +92,25 @@ angle_knee_avg,angle_hip_avg,shoulder_width,trunk_length,...,label
 ...
 ```
 
-## 特征说明
+## Descripción de las características
 
-### 几何特征
-- 关节角度（膝、髋、肘、肩）
-- 身体比例（肩宽、髋宽、躯干长度）
-- 肢体长度比例
+### Características geométricas
+- Ángulos articulares (rodilla, cadera, codo, hombro)
+- Proporciones corporales (ancho de hombros, ancho de caderas, longitud del tronco)
+- Relaciones de longitud entre extremidades
 
-### 运动特征
-- 角速度、加速度
-- 动作周期
-- 运动平滑度
+### Características de movimiento
+- Velocidad angular y aceleración
+- Ciclo del movimiento
+- Suavidad del movimiento
+### Características temporales
+- Rango de variación de los ángulos
+- Media y desviación estándar de la velocidad
+- Características derivadas de la aceleración
 
-### 时序特征
-- 角度变化范围
-- 速度均值和标准差
-- 加速度特征
+## Preprocesamiento de datos
 
-## 数据预处理
-
-运行特征提取脚本：
+Ejecutar el script de extracción de características:
 
 ```bash
 python python/feature_extractor.py \
@@ -120,34 +119,34 @@ python python/feature_extractor.py \
     --normalize
 ```
 
-## 数据增强
+## Aumento de datos
 
-可选的数据增强方法：
-1. 镜像翻转（左右对称）
-2. 速度变化（0.8x - 1.2x）
-3. 轻微旋转（±5度）
+Métodos opcionales de data augmentation:
+1. Volteo horizontal (simetría izquierda-derecha)
+2. Variación de velocidad (0.8x – 1.2x)
+3. Rotación ligera (±5 grados)
 
-## 注意事项
+## Consideraciones importantes
 
-- ⚠️ 原始视频文件较大，不要提交到Git
-- ✅ 提交处理后的特征CSV文件
-- ✅ 保持标注的一致性
-- ✅ 定期备份数据
+- ⚠️ Los vídeos originales son archivos grandes y no deben subirse a Git
+- ✅ Subir únicamente los archivos CSV con las características procesadas
+- ✅ Mantener la coherencia en el etiquetado
+- ✅ Realizar copias de seguridad de los datos periódicamente
 
-## 当前状态
+## Estado actual del conjunto de datos
 
-- [ ] 深蹲正确动作: 0/30
-- [ ] 深蹲膝盖内扣: 0/20
-- [ ] 深蹲下蹲不足: 0/20
-- [ ] 深蹲重心前倾: 0/20
-- [ ] 俯卧撑正确动作: 0/30
-- [ ] 俯卧撑塌腰: 0/20
-- [ ] 俯卧撑臀部过高: 0/20
-- [ ] 俯卧撑手臂角度错误: 0/20
+- [ ] Squat correcto: 0/30
+- [ ] Squat knee_valgus: 0/20
+- [ ] Squat insufficient_depth: 0/20
+- [ ] Squat forward_lean: 0/20
+- [ ] Pushup correcto: 0/30
+- [ ] Pushup sagging_back: 0/20
+- [ ] Pushup high_hips: 0/20
+- [ ] Pushup wrong_arm_angle: 0/20
 
-**总进度**: 0/180 (0%)
+**Progreso total:**: 0/180 (0%)
 
 ---
 
-更新日期: 2025-12-26
+Fecha de actualización: 2026-1-25
 
